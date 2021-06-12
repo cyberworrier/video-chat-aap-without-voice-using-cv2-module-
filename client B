@@ -4,19 +4,19 @@ import cv2
 import numpy
 from io import BytesIO
 
-######### server A #######
+######## server B #########
 server=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server.bind(("127.0.0.1",2323))
+server.bind(("127.0.0.1",2324))
 server.listen()
 
 ip=input('Enter Friend\'s IP: ')
 port=int(input('Enter Friend\'s Port Number: '))
 
-####### client for B #########
+######## client for A ########
 remoteserver=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 remoteserver.connect((ip,port))
 
-###### receiving data from client B #######
+####### receiving data from client A #######
 def receive():
     client,address=server.accept()      #### accept connections ####
     while True:
@@ -28,7 +28,7 @@ def receive():
             photo_recv = numpy.load(load_bytes)
         except:
             pass
-        cv2.imshow("ClientB", photo_recv)
+        cv2.imshow("ClientA", photo_recv)
         cv2.waitKey(1)
         if cv2.waitKey(10)==13:
             break
@@ -37,7 +37,7 @@ def receive():
 
 ######## sending data to server B #######
 def send():
-    cap=cv2.VideoCapture(0)
+    cap=cv2.VideoCapture(1)
     while True:
         try:
             ret,photo=cap.read()
@@ -47,9 +47,9 @@ def send():
             remoteserver.send(np_bytes)
         except:
             cap.release()
-            break 
-
-######## Creating Threads #######
+            break
+            
+######## Creating Threads #######R
 T1=threading.Thread(target=send)
 T2=threading.Thread(target=receive)
 
